@@ -1,0 +1,50 @@
+@page "/inventory"
+@using CarInventory.Models
+@using CarInventory.Services
+@inject CarService CarService
+@inject NavigationManager Nav
+
+<h3>Car Inventory</h3>
+
+<button class="btn btn-primary" @onclick="AddCar">Add New Car</button>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Make</th><th>Model</th><th>Year</th><th>Price</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Cars)
+        {
+            <tr>
+                <td>@car.Make</td>
+                <td>@car.Model</td>
+                <td>@car.Year</td>
+                <td>@car.Price</td>
+                <td>
+                    <button class="btn btn-sm btn-info" @onclick="() => EditCar(car.Id)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(car.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Car> Cars = new();
+
+    protected override void OnInitialized()
+    {
+        Cars = CarService.GetCars();
+    }
+
+    void AddCar() => Nav.NavigateTo("/addcar");
+    void EditCar(int id) => Nav.NavigateTo($"/editcar/{id}");
+
+    void Delete(int id)
+    {
+        CarService.DeleteCar(id);
+        Cars = CarService.GetCars(); // refresh
+    }
+}

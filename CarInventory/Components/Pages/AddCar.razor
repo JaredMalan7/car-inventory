@@ -1,0 +1,25 @@
+@page "/addcar"
+@using CarInventory.Models
+@using CarInventory.Services
+@inject CarService CarService
+@inject NavigationManager Nav
+
+<h3>Add New Car</h3>
+
+<EditForm Model="@car" OnValidSubmit="HandleSubmit">
+    <InputText class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
+    <InputText class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
+    <InputNumber class="form-control mb-2" @bind-Value="car.Year" placeholder="Year"/>
+    <InputNumber class="form-control mb-2" @bind-Value="car.Price"placeholder="Price" />
+    <button class="btn btn-success">Save</button>
+</EditForm>
+
+@code {
+    Car car = new();
+
+    void HandleSubmit()
+    {
+        CarService.AddCar(car);
+        Nav.NavigateTo("/inventory");
+    }
+}
