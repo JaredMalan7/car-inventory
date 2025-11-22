@@ -5,9 +5,22 @@
 @inject NavigationManager Nav
 
 <h3>Car Inventory</h3>
+<input class="form-control mb-3" placeholder="Search by make or model..." @bind="searchText" @bind:event="oninput" />
 
+<select class="form-select mb-3" @bind="yearFilter">
+    <option value="">All Years</option>
+    @foreach (var year in Cars.Select(c => c.Year).Distinct().OrderBy(y => y))
+    {
+        <option value="@year">@year</option>
+    }
+</select>
 <button class="btn btn-primary" @onclick="AddCar">Add New Car</button>
-
+<select class="form-select mb-3" @bind="sortOption" @bind:event="onchange">
+    <option value="">Sort...</option>
+    <option value="price">Price</option>
+    <option value="model">Model</option>
+    <option value="year">Year</option>
+</select>
 <table class="table table-striped mt-3">
     <thead>
         <tr>
@@ -15,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var car in Cars)
+        @foreach (var car in SortedCars)
         {
             <tr>
                 <td>@car.Make</td>
@@ -25,14 +38,27 @@
                 <td>
                     <button class="btn btn-sm btn-info" @onclick="() => EditCar(car.Id)">Edit</button>
                     <button class="btn btn-sm btn-danger" @onclick="() => Delete(car.Id)">Delete</button>
+                    <th>Image</th>
+                    ...
+                    <td>
+                        @if (!string.IsNullOrEmpty(car.ImageFileName))
+                        {
+                            <img src=@($"images/{car.ImageFileName}") style="width:80px;" />
+                        }
+                    </td>
                 </td>
             </tr>
         }
     </tbody>
+    
 </table>
 
 @code {
     private List<Car> Cars = new();
+    private string searchText = "";
+    private string yearFilter = "";
+
+   private string sortOption = "";
 
     protected override void OnInitialized()
     {
@@ -47,4 +73,22 @@
         CarService.DeleteCar(id);
         Cars = CarService.GetCars(); // refresh
     }
+
+    private IEnumerable<Car> FilteredCars =>
+    Cars.Where(c =>
+        (string.IsNullOrWhiteSpace(searchText) ||
+         c.Make.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+         c.Model.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+        && (string.IsNullOrWhiteSpace(yearFilter) ||
+            c.Year.ToString() == yearFilter)
+    );
+
+    private IEnumerable<Car> SortedCars =>
+    sortOption switch
+    {
+        "price" => FilteredCars.OrderBy(c => c.Price),
+        "model" => FilteredCars.OrderBy(c => c.Model),
+        "year" => FilteredCars.OrderBy(c => c.Year),
+        _ => FilteredCars
+    };
 }

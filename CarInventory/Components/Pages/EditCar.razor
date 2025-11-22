@@ -1,0 +1,37 @@
+
+@page "/editcar/{id:int}"
+@using CarInventory.Models
+@using CarInventory.Services
+@inject CarService CarService
+@inject NavigationManager Nav
+
+<h3>Edit Car</h3>
+
+<EditForm Model="@car" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
+    <InputText class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
+    <InputNumber class="form-control mb-2" @bind-Value="car.Year" placeholder="Year"/>
+    <InputNumber class="form-control mb-2" @bind-Value="car.Price"placeholder="Price" />
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <button class="btn btn-success mt-2">Save Changes</button>
+</EditForm>
+
+@code {
+    [Parameter] public int id { get; set; }
+    Car? car;
+
+    protected override void OnInitialized()
+    {
+        car = CarService.GetCarById(id);
+    }
+
+    void HandleSubmit()
+    {
+        CarService.UpdateCar(car);
+        Nav.NavigateTo("/inventory");
+    }
+}
