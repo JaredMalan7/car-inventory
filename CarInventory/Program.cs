@@ -1,30 +1,44 @@
 using CarInventory.Components;
+using CarInventory.Data;
 using CarInventory.Models;
 using CarInventory.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// === Configure SQLite Database ===
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=carinventory.db"));
+
+// === Add Services ===
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddSingleton<CarService>();
+
+builder.Services.AddScoped<CarService>();
+
 var app = builder.Build();
 
+// === Ensure DB is created + apply migrations + seed ===
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-// Configure the HTTP request pipeline.
+    // Creates DB file + tables if missing
+    db.Database.EnsureCreated();
+}
+
+// === Configure the HTTP request pipeline ===
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-
+app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
