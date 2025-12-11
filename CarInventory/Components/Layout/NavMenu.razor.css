@@ -17,7 +17,7 @@
 
 .top-row {
     min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: #8B0A1A;
 }
 
 .navbar-brand {
@@ -72,17 +72,18 @@
     }
 
 .nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.37);
+    background-color: rgba(255,255,255,0.25);
     color: white;
 }
 
 .nav-item ::deep .nav-link:hover {
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255,255,255,0.15);
     color: white;
 }
 
 .nav-scrollable {
     display: none;
+    background: linear-gradient(to bottom, #8B0A1A, #4B000A);
 }
 
 .navbar-toggler:checked ~ .nav-scrollable {

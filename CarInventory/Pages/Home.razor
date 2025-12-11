@@ -1,0 +1,43 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Web
+@using CarInventory.Components
+@using CarInventory.Models
+
+@inject CarInventory.Data.AppDbContext Db
+
+<PageTitle>Home</PageTitle>
+
+<h1>Available Cars</h1>
+
+<InventorySearch Cars="AllCars" ResultsChanged="UpdateResults" />
+
+@if (FilteredCars is null || !FilteredCars.Any())
+{
+    <p>No cars match your search.</p>
+}
+else
+{
+    <ul>
+        @foreach (var car in FilteredCars)
+        {
+            <li>@car.Make @car.Model — @car.Year — $@car.Price</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Car> AllCars = new();
+    private List<Car> FilteredCars = new();
+
+    protected override void OnInitialized()
+    {
+        AllCars = Db.Cars.Where(c => !c.IsSold).ToList();
+        FilteredCars = AllCars;
+    }
+
+    private void UpdateResults(List<Car> results)
+    {
+        FilteredCars = results;
+        StateHasChanged();
+    }
+}

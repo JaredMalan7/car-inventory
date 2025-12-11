@@ -12,7 +12,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // === Add Services ===
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options =>
+    {
+        options.DetailedErrors = true;
+    });
 
 builder.Services.AddScoped<CarService>();
 

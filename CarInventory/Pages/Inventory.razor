@@ -1,26 +1,16 @@
 @page "/inventory"
 @using CarInventory.Models
 @using CarInventory.Services
+@using CarInventory.Components
 @inject CarInventory.Data.AppDbContext Db
 @inject NavigationManager Nav
 
 <h3>Car Inventory</h3>
-<input class="form-control mb-3" placeholder="Search by make or model..." @bind="searchText" @bind:event="oninput" />
-
-<select class="form-select mb-3" @bind="yearFilter">
-    <option value="">All Years</option>
-    @foreach (var year in Cars.Select(c => c.Year).Distinct().OrderBy(y => y))
-    {
-        <option value="@year">@year</option>
-    }
-</select>
+@* <InventorySearch SearchText="@searchText" SearchTextChanged="@(value => searchText = value)" YearFilter="@yearFilter"
+    YearFilterChanged="@(value => yearFilter = value)" SortOption="@sortOption"
+    SortOptionChanged="@(value => sortOption = value)"
+    AvailableYears="@Cars.Select(c => c.Year).Distinct().OrderBy(y => y)" /> *@
 <button class="btn btn-primary" @onclick="AddCar">Add New Car</button>
-<select class="form-select mb-3" @bind="sortOption" @bind:event="onchange">
-    <option value="">Sort...</option>
-    <option value="price">Price</option>
-    <option value="model">Model</option>
-    <option value="year">Year</option>
-</select>
 <table class="table table-striped mt-3">
     <thead>
         <tr>

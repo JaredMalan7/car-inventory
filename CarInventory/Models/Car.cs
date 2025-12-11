@@ -15,5 +15,6 @@ namespace CarInventory.Models
         public decimal Price { get; set; }
         public string ImageUrl { get; set; }
         public string? ImageFileName { get; set; }
+        public bool IsSold { get; set; } = false;
     }
 }

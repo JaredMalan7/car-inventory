@@ -1,0 +1,33 @@
+@rendermode InteractiveServer
+@using CarInventory.Models
+
+<input class="form-control mb-3" placeholder="Search cars..." @bind="Term" @bind:event="oninput" />
+
+@code {
+    [Parameter] public List<Car> Cars { get; set; } = new();
+    [Parameter] public EventCallback<List<Car>> ResultsChanged { get; set; }
+
+    private async Task OnSearchChanged()
+    {
+        Console.WriteLine($"SEARCH TERM UPDATED: '{Term}'");
+
+        var filtered = Cars
+        .Where(c => c.Make.Contains(Term, StringComparison.OrdinalIgnoreCase) ||
+        c.Model.Contains(Term, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+        await ResultsChanged.InvokeAsync(filtered);
+    }
+
+    // THE NEW PROPERTY NAME — FIXES BINDING
+    private string _term = "";
+    private string Term
+    {
+        get => _term;
+        set
+        {
+            _term = value;
+            _ = OnSearchChanged();
+        }
+    }
+}
