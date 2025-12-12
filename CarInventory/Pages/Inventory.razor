@@ -6,10 +6,8 @@
 @inject NavigationManager Nav
 
 <h3>Car Inventory</h3>
-@* <InventorySearch SearchText="@searchText" SearchTextChanged="@(value => searchText = value)" YearFilter="@yearFilter"
-    YearFilterChanged="@(value => yearFilter = value)" SortOption="@sortOption"
-    SortOptionChanged="@(value => sortOption = value)"
-    AvailableYears="@Cars.Select(c => c.Year).Distinct().OrderBy(y => y)" /> *@
+<InventorySearch Cars="Cars" ResultsChanged="UpdateResults" />
+
 <button class="btn btn-primary" @onclick="AddCar">Add New Car</button>
 <table class="table table-striped mt-3">
     <thead>
@@ -23,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var car in SortedCars)
+        @foreach (var car in FilteredCars)
         {
             <tr>
                 <td>@car.Make</td>
@@ -49,10 +47,10 @@
 @code {
     private List<Car> Cars = new();
 
-    private string searchText = "";
+    @* private string searchText = "";
     private string yearFilter = "";
 
-    private string sortOption = "";
+    private string sortOption = ""; *@
 
     protected override void OnInitialized()
     {
@@ -73,6 +71,8 @@
         Cars = Db.Cars.ToList();
     }
 
+    private List<Car> FilteredCars = new();
+    @* 
     private IEnumerable<Car> FilteredCars =>
     Cars.Where(c =>
     (string.IsNullOrWhiteSpace(searchText) ||
@@ -89,5 +89,11 @@
         "model" => FilteredCars.OrderBy(c => c.Model),
         "year" => FilteredCars.OrderBy(c => c.Year),
         _ => FilteredCars
-    };
+    }; *@
+
+    private void UpdateResults(List<Car> results)
+    {
+        FilteredCars = results;
+        StateHasChanged();
+    }
 }
