@@ -1,0 +1,66 @@
+@page "/car/{Id:int}"
+@using CarInventory.Models
+@inject CarInventory.Services.CarService CarService
+@inject NavigationManager Nav
+
+<PageTitle>Car Details</PageTitle>
+
+@if (car == null)
+{
+    <p>Loading car information...</p>
+}
+else
+{
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+
+                <div class="card shadow-sm">
+                    @if (!string.IsNullOrEmpty(car.ImageFileName))
+                    {
+                        <img src="@($"images/{car.ImageFileName}")" class="card-img-top"
+                            style="max-height:400px; object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center bg-secondary text-white"
+                            style="height:300px;">
+                            <h5>No image available</h5>
+                        </div>
+                    }
+
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            @car.Year @car.Make @car.Model
+                        </h3>
+
+                        <h4 class="text-success mb-3">
+                            @car.Price.ToString("C")
+                        </h4>
+
+                        <button class="btn btn-outline-secondary" @onclick="GoBack">
+                            ← Back to Inventory
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Car? car;
+
+    protected override void OnInitialized()
+    {
+        car = CarService.GetCarById(Id);
+    }
+
+    private void GoBack()
+    {
+        Nav.NavigateTo("/inventory");
+    }
+}

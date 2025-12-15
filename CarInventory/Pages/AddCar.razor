@@ -74,11 +74,21 @@
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
         selectedImage = e.File;
+
+        var imagesDir = Path.Combine(
+        Directory.GetCurrentDirectory(),
+        "wwwroot",
+        "images"
+        );
+
+        Directory.CreateDirectory(imagesDir);
+
+        var filePath = Path.Combine(imagesDir, selectedImage.Name);
+
         var buffer = new byte[selectedImage.Size];
         using var stream = selectedImage.OpenReadStream();
         await stream.ReadAsync(buffer);
 
-        var filePath = Path.Combine("wwwroot/images", selectedImage.Name);
         await File.WriteAllBytesAsync(filePath, buffer);
 
         car.ImageFileName = selectedImage.Name;

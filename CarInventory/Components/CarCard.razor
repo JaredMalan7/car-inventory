@@ -1,6 +1,8 @@
 @using CarInventory.Models
+@inject NavigationManager Nav
 
-<div class="card h-100 shadow-sm car-card">
+<div class="card h-100 shadow-sm car-card" role="button" @onclick="GoToCar">
+
     <div class="car-image">
         @if (!string.IsNullOrEmpty(Car.ImageFileName))
         {
@@ -28,4 +30,9 @@
 @code {
     [Parameter, EditorRequired]
     public Car Car { get; set; } = default!;
+
+    private void GoToCar()
+    {
+        Nav.NavigateTo($"/car/{Car.Id}");
+    }
 }
