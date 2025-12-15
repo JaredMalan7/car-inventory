@@ -25,9 +25,18 @@ namespace CarInventory.Services
             _db.SaveChanges();
         }
 
-        public void UpdateCar(Car car)
+        public void UpdateCar(Car updatedCar)
         {
-            _db.Cars.Update(car);
+            var existingCar = _db.Cars.FirstOrDefault(c => c.Id == updatedCar.Id);
+            if (existingCar == null)
+                return;
+
+            existingCar.Make = updatedCar.Make;
+            existingCar.Model = updatedCar.Model;
+            existingCar.Year = updatedCar.Year;
+            existingCar.Price = updatedCar.Price;
+            existingCar.ImageFileName = updatedCar.ImageFileName;
+
             _db.SaveChanges();
         }
 

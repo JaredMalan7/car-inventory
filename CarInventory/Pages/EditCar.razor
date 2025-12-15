@@ -1,4 +1,3 @@
-
 @page "/editcar/{id:int}"
 @using CarInventory.Models
 @using CarInventory.Services
@@ -7,22 +6,38 @@
 
 <h3>Edit Car</h3>
 
-<EditForm Model="@car" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+@if (car != null)
+{
+    <EditForm Model="@car" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <InputText class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
-    <InputText class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
-    <InputNumber class="form-control mb-2" @bind-Value="car.Year" placeholder="Year"/>
-    <InputNumber class="form-control mb-2" @bind-Value="car.Price"placeholder="Price" />
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <button class="btn btn-success mt-2">Save Changes</button>
-</EditForm>
+        <label for="makeInput">Make</label>
+        <InputText id="makeInput" class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
+
+        <label for="modelInput">Model</label>
+        <InputText id="modelInput" class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
+
+        <label for="yearInput">Year</label>
+        <InputNumber id="yearInput" class="form-control mb-2" @bind-Value="car.Year" placeholder="Year" />
+
+        <label for="priceInput">Price</label>
+        <InputNumber id="priceInput" class="form-control mb-2" TValue="decimal" @bind-Value="car.Price"
+            @bind-Value:format="0.00" step="0.01" />
+        <small class="text-muted">Price will always display two decimal places.</small>
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        </div>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int id { get; set; }
-    Car? car;
+    private Car? car;
 
     protected override void OnInitialized()
     {
@@ -31,8 +46,12 @@
 
     void HandleSubmit()
     {
-        //if(user == admin || user == employee)
         CarService.UpdateCar(car);
+        Nav.NavigateTo("/inventory");
+    }
+
+    void CancelEdit()
+    {
         Nav.NavigateTo("/inventory");
     }
 }

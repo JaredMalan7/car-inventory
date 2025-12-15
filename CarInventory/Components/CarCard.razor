@@ -1,0 +1,31 @@
+@using CarInventory.Models
+
+<div class="card h-100 shadow-sm car-card">
+    <div class="car-image">
+        @if (!string.IsNullOrEmpty(Car.ImageFileName))
+        {
+            <img src="images/@Car.ImageFileName" class="card-img-top" alt="Car image" />
+        }
+        else
+        {
+            <div class="no-image">
+                No Image Available
+            </div>
+        }
+    </div>
+
+    <div class="card-body">
+        <h5 class="card-title">
+            @Car.Year @Car.Make @Car.Model
+        </h5>
+
+        <p class="card-text fw-bold text-primary">
+            @Car.Price.ToString("C")
+        </p>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Car Car { get; set; } = default!;
+}

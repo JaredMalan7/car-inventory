@@ -1,13 +1,11 @@
 ﻿@page "/"
-@using Microsoft.AspNetCore.Components.Web
-@using CarInventory.Components
 @using CarInventory.Models
-
+@using CarInventory.Components
 @inject CarInventory.Data.AppDbContext Db
 
 <PageTitle>Home</PageTitle>
 
-<h1>Available Cars</h1>
+<h1 class="mb-4">Available Cars</h1>
 
 <InventorySearch Cars="AllCars" ResultsChanged="UpdateResults" />
 
@@ -17,12 +15,14 @@
 }
 else
 {
-    <ul>
+    <div class="row g-4 mt-3">
         @foreach (var car in FilteredCars)
         {
-            <li>@car.Make @car.Model — @car.Year — $@car.Price</li>
+            <div class="col-12 col-md-6 col-lg-4">
+                <CarCard Car="car" />
+            </div>
         }
-    </ul>
+    </div>
 }
 
 @code {

@@ -27,7 +27,7 @@
                 <td>@car.Make</td>
                 <td>@car.Model</td>
                 <td>@car.Year</td>
-                <td>@car.Price</td>
+                <td>@car.Price.ToString("C")</td>
                 <td>
                     <button class="btn btn-sm btn-info" @onclick="() => EditCar(car.Id)">Edit</button>
                     <button class="btn btn-sm btn-danger" @onclick="() => Delete(car.Id)">Delete</button>
