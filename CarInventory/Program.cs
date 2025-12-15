@@ -18,6 +18,7 @@ builder.Services.AddRazorComponents()
     });
 
 builder.Services.AddScoped<CarService>();
+builder.Services.AddHttpClient<VehicleLookupService>();
 
 var app = builder.Build();
 

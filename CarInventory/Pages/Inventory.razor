@@ -55,6 +55,7 @@
     protected override void OnInitialized()
     {
         Cars = Db.Cars.ToList();
+        FilteredCars = Cars;
     }
 
     void AddCar() => Nav.NavigateTo("/addcar");

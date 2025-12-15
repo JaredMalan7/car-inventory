@@ -3,29 +3,73 @@
 @using CarInventory.Services
 @inject CarService CarService
 @inject NavigationManager Nav
+@inject VehicleLookupService VehicleLookupService
 
-<h3>Add New Car</h3>
+<div class="container mt-4" style="max-width: 720px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="mb-3">Add New Car</h3>
 
-<EditForm Model="@car" OnValidSubmit="HandleSubmit">
-    <InputText class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
-    <InputText class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
-    <InputNumber class="form-control mb-2" @bind-Value="car.Year" placeholder="Year"/>
-    <InputNumber class="form-control mb-2" @bind-Value="car.Price"placeholder="Price" />
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <button class="btn btn-success">Save</button>
-</EditForm>
-<InputFile OnChange="HandleImageUpload" />
-@if (!string.IsNullOrEmpty(imagePreview))
-{
-    <img src="@imagePreview" style="max-width:200px;" class="mt-3"/>
-}
+            <EditForm Model="@car" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-<button class="btn btn-success mt-3">Save</button>
+                <label class="form-label">Make</label>
+                <select class="form-select mb-3" @bind="car.Make">
+                    <option value="">Select Make</option>
+                    @foreach (var make in Makes)
+                    {
+                        <option value="@make">@make</option>
+                    }
+                </select>
+
+                <label class="form-label">Model</label>
+                <InputText class="form-control mb-3" @bind-Value="car.Model" placeholder="Model" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Year</label>
+                        <InputNumber class="form-control mb-3" @bind-Value="car.Year" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Price</label>
+                        <InputNumber class="form-control mb-3" @bind-Value="car.Price" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label d-block">Car Image</label>
+                    <label class="btn btn-outline-secondary btn-sm">
+                        Choose Image
+                        <InputFile OnChange="HandleImageUpload" style="display:none" />
+                    </label>
+                </div>
+
+                @if (!string.IsNullOrEmpty(imagePreview))
+                {
+                    <div class="mt-3">
+                        <img src="@imagePreview" class="img-thumbnail" style="max-width:200px;" />
+                    </div>
+                }
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button class="btn btn-success px-4" type="submit">Save</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
 @code {
-    Car car = new();
+    private Car car = new();
     private IBrowserFile? selectedImage;
     private string? imagePreview;
+    private List<string> Makes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Makes = await VehicleLookupService.GetPassengerCarMakesAsync();
+    }
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
@@ -40,9 +84,9 @@
         car.ImageFileName = selectedImage.Name;
         imagePreview = $"images/{selectedImage.Name}";
     }
-    void HandleSubmit()
+
+    private void HandleSubmit()
     {
-        //if(user == admin)
         CarService.AddCar(car);
         Nav.NavigateTo("/inventory");
     }
