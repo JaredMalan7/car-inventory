@@ -1,7 +1,8 @@
-﻿@inject CarInventory.Services.AuthService Auth
+﻿@inject CarInventory.Services.AuthService Auth // Authentication service
 @inject NavigationManager Nav
-@implements IDisposable
+@implements IDisposable // Required to clean up event subscriptions
 
+<!-- Top navigation bar -->
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CarInventory</a>
@@ -46,22 +47,26 @@
 </div>
 
 @code {
+    // Subscribe to authentication changes so the menu updates dynamically
     protected override void OnInitialized()
     {
         Auth.OnAuthChanged += HandleAuthChanged;
     }
 
+    // Forces the component to re-render when login/logout occurs
     void HandleAuthChanged()
     {
         InvokeAsync(StateHasChanged);
     }
 
+    // Logs the user out and redirects to the login page
     void Logout()
     {
         Auth.Logout();
         Nav.NavigateTo("/login", true);
     }
 
+    // Unsubscribe from events to prevent memory leaks
     public void Dispose()
     {
         Auth.OnAuthChanged -= HandleAuthChanged;

@@ -5,20 +5,25 @@
 
 <PageTitle>Home</PageTitle>
 
+
 <h1 class="mb-4">Available Cars</h1>
 
+<!-- Search component used to filter available cars -->
 <InventorySearch Cars="AllCars" ResultsChanged="UpdateResults" />
 
+<!-- Message shown when no cars match the search -->
 @if (FilteredCars is null || !FilteredCars.Any())
 {
     <p>No cars match your search.</p>
 }
 else
 {
+    <!-- Responsive grid of car cards -->
     <div class="row g-4 mt-3">
         @foreach (var car in FilteredCars)
         {
             <div class="col-12 col-md-6 col-lg-4">
+                <!-- Reusable component to display car info -->
                 <CarCard Car="car" />
             </div>
         }
@@ -26,15 +31,24 @@ else
 }
 
 @code {
+
+    // Full list of cars loaded from the database
     private List<Car> AllCars = new();
+
+    // Cars currently displayed after filtering
     private List<Car> FilteredCars = new();
 
+    // Runs when the Home page loads
     protected override void OnInitialized()
     {
+        // Load only cars that are not marked as sold
         AllCars = Db.Cars.Where(c => !c.IsSold).ToList();
+
+        // Show all cars initially
         FilteredCars = AllCars;
     }
 
+    // Receives filtered results from InventorySearch component
     private void UpdateResults(List<Car> results)
     {
         FilteredCars = results;

@@ -1,8 +1,10 @@
 @using CarInventory.Models
 @inject NavigationManager Nav
 
+
 <div class="card h-100 shadow-sm car-card" role="button" @onclick="GoToCar">
 
+    <!-- Car image section -->
     <div class="car-image">
         @if (!string.IsNullOrEmpty(Car.ImageFileName))
         {
@@ -10,17 +12,20 @@
         }
         else
         {
+            <!-- Placeholder shown when no image exists -->
             <div class="no-image">
                 No Image Available
             </div>
         }
     </div>
 
+    <!-- Car details section-->
     <div class="card-body">
         <h5 class="card-title">
             @Car.Year @Car.Make @Car.Model
         </h5>
 
+        <!-- Price section formatted as currency -->
         <p class="card-text fw-bold text-primary">
             @Car.Price.ToString("C")
         </p>
@@ -28,9 +33,11 @@
 </div>
 
 @code {
+    // Car data passed in from the parent component
     [Parameter, EditorRequired]
     public Car Car { get; set; } = default!;
 
+    // Navigate to the individual car details page
     private void GoToCar()
     {
         Nav.NavigateTo($"/car/{Car.Id}");

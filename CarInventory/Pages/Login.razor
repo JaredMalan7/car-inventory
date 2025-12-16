@@ -21,12 +21,14 @@
             <InputText class="form-control" type="password" @bind-Value="loginModel.Password" />
         </div>
 
+        <!-- Error message shown on failed login -->
         @if (!string.IsNullOrEmpty(error))
         {
             <div class="alert alert-danger text-center mb-3">
                 @error
             </div>
         }
+
 
         <button class="btn btn-primary w-100">
             Login
@@ -35,25 +37,34 @@
 </div>
 
 @code {
+
+    // Model bound to the login form
     private LoginModel loginModel = new();
+
+    // Holds error message when login fails
     private string? error;
 
+    // Handles login form submission
     void HandleLogin()
     {
         error = null;
 
+        // Attempt login using AuthService
         var success = Auth.Login(loginModel.Username, loginModel.Password);
 
         if (success)
         {
+            // Redirect to inventory page on successful login
             Nav.NavigateTo("/inventory");
         }
         else
         {
+            // Show error message if credentials are invalid
             error = "Invalid username or password";
         }
     }
 
+    // Simple model for capturing login input
     class LoginModel
     {
         public string Username { get; set; } = "";

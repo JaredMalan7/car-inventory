@@ -7,9 +7,16 @@
 @inject NavigationManager Nav
 
 <h3>Car Inventory</h3>
+
+<!-- Search component used to filter cars by make or model -->
 <InventorySearch Cars="Cars" ResultsChanged="UpdateResults" />
 
-<button class="btn btn-primary" @onclick="AddCar">Add New Car</button>
+<!-- Button to navigate to the Add Car page -->
+<button class="btn btn-primary" @onclick="AddCar">
+    Add New Car
+</button>
+
+<!-- Inventory table -->
 <table class="table table-striped mt-3">
     <thead>
         <tr>
@@ -21,6 +28,7 @@
             <th></th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var car in FilteredCars)
         {
@@ -28,48 +36,65 @@
                 <td>@car.Make</td>
                 <td>@car.Model</td>
                 <td>@car.Year</td>
+
+
                 <td>@car.Price.ToString("C")</td>
+
+                <!-- Action buttons -->
                 <td>
-                    <button class="btn btn-sm btn-info" @onclick="() => EditCar(car.Id)">Edit</button>
-                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(car.Id)">Delete</button>
+                    <button class="btn btn-sm btn-info" @onclick="() => EditCar(car.Id)">
+                        Edit
+                    </button>
+
+                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(car.Id)">
+                        Delete
+                    </button>
                 </td>
+
+                <!-- Thumbnail image if available -->
                 <td>
                     @if (!string.IsNullOrEmpty(car.ImageFileName))
                     {
-                        <img src=@($"images/{car.ImageFileName}") style="width:80px;" />
+                        <img src="@($"images/{car.ImageFileName}")" style="width:80px;" />
                     }
                 </td>
             </tr>
         }
     </tbody>
-
 </table>
 
 @code {
 
-
+    // Full list of cars loaded from the database
     private List<Car> Cars = new();
 
-    @* private string searchText = "";
-    private string yearFilter = "";
+    // List used for displaying filtered results
+    private List<Car> FilteredCars = new();
 
-    private string sortOption = ""; *@
-
+    // Runs when the page loads
     protected override void OnInitialized()
     {
+        // Redirect unauthenticated users to the login page
         if (!Auth.IsLoggedIn)
         {
             Nav.NavigateTo("/login", true);
             return;
         }
 
+        // Load cars from the database
         Cars = Db.Cars.ToList();
+
+        // Initially show all cars
         FilteredCars = Cars;
     }
 
+    // Navigate to Add Car page
     void AddCar() => Nav.NavigateTo("/addcar");
+
+    // Navigate to Edit Car page
     void EditCar(int id) => Nav.NavigateTo($"/editcar/{id}");
 
+    // Delete a car from the database
     void Delete(int id)
     {
         var car = Db.Cars.FirstOrDefault(c => c.Id == id);
@@ -78,29 +103,40 @@
             Db.Cars.Remove(car);
             Db.SaveChanges();
         }
+
+        // Refresh car list after deletion
         Cars = Db.Cars.ToList();
+        FilteredCars = Cars;
     }
 
-    private List<Car> FilteredCars = new();
-    @* 
+    /*
+    * NOTE:
+    * The code below was originally intended for additional filtering
+    * and sorting features (year, price, model).
+    * Due to time constraints, it was intentionally disabled.
+    */
+
+    @*
     private IEnumerable<Car> FilteredCars =>
-    Cars.Where(c =>
-    (string.IsNullOrWhiteSpace(searchText) ||
-    c.Make.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-    c.Model.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-    && (string.IsNullOrWhiteSpace(yearFilter) ||
-    c.Year.ToString() == yearFilter)
-    );
+        Cars.Where(c =>
+            (string.IsNullOrWhiteSpace(searchText) ||
+             c.Make.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+             c.Model.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            && (string.IsNullOrWhiteSpace(yearFilter) ||
+                c.Year.ToString() == yearFilter)
+        );
 
     private IEnumerable<Car> SortedCars =>
-    sortOption switch
-    {
-        "price" => FilteredCars.OrderBy(c => c.Price),
-        "model" => FilteredCars.OrderBy(c => c.Model),
-        "year" => FilteredCars.OrderBy(c => c.Year),
-        _ => FilteredCars
-    }; *@
+        sortOption switch
+        {
+            "price" => FilteredCars.OrderBy(c => c.Price),
+            "model" => FilteredCars.OrderBy(c => c.Model),
+            "year" => FilteredCars.OrderBy(c => c.Year),
+            _ => FilteredCars
+        };
+    *@
 
+    // Receives filtered results from the InventorySearch component
     private void UpdateResults(List<Car> results)
     {
         FilteredCars = results;

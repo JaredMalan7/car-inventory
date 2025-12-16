@@ -1,27 +1,36 @@
 using CarInventory.Models;
 using Microsoft.EntityFrameworkCore;
 
+// THIS IS WHERE I SEEDED THE USER AND THE CARS TO HAVE SOMETHING TO WORK WITH WHEN THE REPO IS CLONED AND FOR DEMO PURPOSES
+
 namespace CarInventory.Data
 {
+    // Represents the Entity Framework Core database context for the application
     public class AppDbContext : DbContext
     {
+        // Represents the Cars table in the database
         public DbSet<Car> Cars => Set<Car>();
+        // Represents the Users table in the database
         public DbSet<User> Users => Set<User>();
 
+        // Constructor that receives configuration options via dependency injection
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Call the base method to ensure proper model creation behavior
             base.OnModelCreating(modelBuilder);
 
             // === Car Defaults ===
+            // Configure default value for ImageUrl property of Car entities
             modelBuilder.Entity<Car>()
                 .Property(c => c.ImageUrl)
                 .HasDefaultValue("no-image");
 
             // === Seed Super Admin ===
+            // Seed a default admin user for demo purposes
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -35,6 +44,7 @@ namespace CarInventory.Data
             );
 
             // === Seed Cars ===
+            // Seed sample cars for initial application data
             modelBuilder.Entity<Car>().HasData(
                 new Car
                 {

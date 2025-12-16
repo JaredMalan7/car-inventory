@@ -35,10 +35,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseAntiforgery();
+app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
+app.UseStaticFiles(); // Enable serving static files (CSS, images, etc.)
+app.UseAntiforgery(); // Enable antiforgery token validation for form posts
 
+
+// === Endpoint Mapping ===
+// Map Razor Components and enable interactive server render mode.
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

@@ -1,16 +1,18 @@
 @rendermode InteractiveServer
+// Enables interactive server-side rendering for this component
 @using CarInventory.Models
 
+// Search box input for filtering cars by make or model
 <input class="form-control mb-3" placeholder="Search cars..." @bind="Term" @bind:event="oninput" />
 
 @code {
+    // Parameters passed from the parent component
     [Parameter] public List<Car> Cars { get; set; } = new();
     [Parameter] public EventCallback<List<Car>> ResultsChanged { get; set; }
 
+    // Filters the cars based on the search term and notifies the parent component
     private async Task OnSearchChanged()
     {
-        Console.WriteLine($"SEARCH TERM UPDATED: '{Term}'");
-
         var filtered = Cars
         .Where(c => c.Make.Contains(Term, StringComparison.OrdinalIgnoreCase) ||
         c.Model.Contains(Term, StringComparison.OrdinalIgnoreCase))
@@ -19,8 +21,10 @@
         await ResultsChanged.InvokeAsync(filtered);
     }
 
-    // THE NEW PROPERTY NAME — FIXES BINDING
+    // Stores the current search text
     private string _term = "";
+
+    // Triggers filtering on each keystroke when the search term changes
     private string Term
     {
         get => _term;
