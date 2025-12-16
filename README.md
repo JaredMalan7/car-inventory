@@ -68,7 +68,8 @@ This is **not secure** and should never be done in a production application.
 
 ```bash
 dotnet run
-
+```
+---
 ## How to Use the Application
 
 ### Login
