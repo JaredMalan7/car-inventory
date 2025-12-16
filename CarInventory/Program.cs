@@ -18,6 +18,7 @@ builder.Services.AddAntiforgery();
 // === App Services ===
 builder.Services.AddScoped<CarService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddHttpClient<VehicleLookupService>();
 
 var app = builder.Build();
 
