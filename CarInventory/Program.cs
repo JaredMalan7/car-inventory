@@ -1,6 +1,5 @@
 using CarInventory.Components;
 using CarInventory.Data;
-using CarInventory.Models;
 using CarInventory.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,28 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=carinventory.db"));
 
-// === Add Services ===
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents(options =>
-    {
-        options.DetailedErrors = true;
-    });
+    .AddInteractiveServerComponents();
 
+// Antiforgery is required for EditForm posts (e.g., /login)
+builder.Services.AddAntiforgery();
+
+// === App Services ===
 builder.Services.AddScoped<CarService>();
-builder.Services.AddHttpClient<VehicleLookupService>();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
-// === Ensure DB is created + apply migrations + seed ===
+// === Ensure DB is created ===
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    // Creates DB file + tables if missing
     db.Database.EnsureCreated();
 }
 
-// === Configure the HTTP request pipeline ===
+// === Middleware ===
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -41,7 +38,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

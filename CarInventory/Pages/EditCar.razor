@@ -6,37 +6,49 @@
 
 <h3>Edit Car</h3>
 
-@if (car != null)
+@if (car == null)
 {
-    <EditForm Model="@car" OnValidSubmit="HandleSubmit">
+    <p>Loading car...</p>
+}
+else
+{
+    <EditForm Model="car" OnValidSubmit="HandleSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
-        <label for="makeInput">Make</label>
-        <InputText id="makeInput" class="form-control mb-2" @bind-Value="car.Make" placeholder="Make" />
-
-        <label for="modelInput">Model</label>
-        <InputText id="modelInput" class="form-control mb-2" @bind-Value="car.Model" placeholder="Model" />
-
-        <label for="yearInput">Year</label>
-        <InputNumber id="yearInput" class="form-control mb-2" @bind-Value="car.Year" placeholder="Year" />
-
-        <label for="priceInput">Price</label>
-        <InputNumber id="priceInput" class="form-control mb-2" TValue="decimal" @bind-Value="car.Price"
-            @bind-Value:format="0.00" step="0.01" />
-        <small class="text-muted">Price will always display two decimal places.</small>
-
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="d-flex gap-2 mt-3">
-            <button type="submit" class="btn btn-success">Save Changes</button>
-            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+        <div class="mb-2">
+            <label class="form-label">Make</label>
+            <InputText class="form-control" @bind-Value="car.Make" />
         </div>
+
+        <div class="mb-2">
+            <label class="form-label">Model</label>
+            <InputText class="form-control" @bind-Value="car.Model" />
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Year</label>
+            <InputNumber class="form-control" @bind-Value="car.Year" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <InputNumber class="form-control" @bind-Value="car.Price" />
+        </div>
+
+        <button type="submit" class="btn btn-success me-2">
+            Save
+        </button>
+
+        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">
+            Cancel
+        </button>
     </EditForm>
 }
 
 @code {
     [Parameter] public int id { get; set; }
+
     private Car? car;
 
     protected override void OnInitialized()
@@ -46,6 +58,8 @@
 
     void HandleSubmit()
     {
+        if (car is null) return;
+
         CarService.UpdateCar(car);
         Nav.NavigateTo("/inventory");
     }

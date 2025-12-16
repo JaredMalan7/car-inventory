@@ -2,6 +2,7 @@
 @using CarInventory.Models
 @using CarInventory.Services
 @using CarInventory.Components
+@inject CarInventory.Services.AuthService Auth
 @inject CarInventory.Data.AppDbContext Db
 @inject NavigationManager Nav
 
@@ -45,6 +46,8 @@
 </table>
 
 @code {
+
+
     private List<Car> Cars = new();
 
     @* private string searchText = "";
@@ -54,6 +57,12 @@
 
     protected override void OnInitialized()
     {
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login", true);
+            return;
+        }
+
         Cars = Db.Cars.ToList();
         FilteredCars = Cars;
     }

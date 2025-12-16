@@ -1,0 +1,62 @@
+@page "/login"
+@inject CarInventory.Services.AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>Login</PageTitle>
+
+<div class="container mt-5" style="max-width:400px;">
+    <h3 class="mb-4 text-center">Admin Login</h3>
+
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <InputText class="form-control" @bind-Value="loginModel.Username" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <InputText class="form-control" type="password" @bind-Value="loginModel.Password" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger text-center mb-3">
+                @error
+            </div>
+        }
+
+        <button class="btn btn-primary w-100">
+            Login
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? error;
+
+    void HandleLogin()
+    {
+        error = null;
+
+        var success = Auth.Login(loginModel.Username, loginModel.Password);
+
+        if (success)
+        {
+            Nav.NavigateTo("/inventory");
+        }
+        else
+        {
+            error = "Invalid username or password";
+        }
+    }
+
+    class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}
