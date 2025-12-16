@@ -1,23 +1,27 @@
-# ---- Build stage ----
+# ---------- Build stage ----------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy project file
-COPY CarInventory.csproj ./
-RUN dotnet restore
+# Copy project file and restore dependencies
+COPY CarInventory/CarInventory.csproj CarInventory/
+RUN dotnet restore CarInventory/CarInventory.csproj
 
-# Copy everything else
-COPY . ./
-RUN dotnet publish -c Release -o /out
+# Copy the rest of the source code
+COPY CarInventory/. CarInventory/
 
-# ---- Runtime stage ----
+# Build and publish
+WORKDIR /app/CarInventory
+RUN dotnet publish -c Release -o /app/out
+
+# ---------- Runtime stage ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-COPY --from=build /out .
+# Copy published output
+COPY --from=build /app/out .
 
-# Render uses port 8080
-ENV ASPNETCORE_URLS=http://+:8080
+# Expose port Render expects
 EXPOSE 8080
 
+# Start the app
 ENTRYPOINT ["dotnet", "CarInventory.dll"]
